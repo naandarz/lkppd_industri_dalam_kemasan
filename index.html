@@ -359,6 +359,19 @@
   }
   .yn-select:focus { border-color: var(--brand); }
 
+  .alasan-input {
+    border: 1.5px solid var(--gray-300);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    width: 100%;
+    background: var(--gray-50);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .alasan-input:focus { border-color: var(--brand); }
+
   /* ── TECH CHIPS ── */
   .tech-chips {
     display: flex;
@@ -502,7 +515,10 @@
 
   /* ── SUBMIT BUTTON ── */
   .submit-wrap {
-    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
     padding: 20px 0 8px;
   }
   .submit-btn {
@@ -531,10 +547,80 @@
     line-height: 1.6;
   }
 
+  /* ── TEACHER SETTINGS BAR ── */
+  .teacher-bar {
+    background: var(--amber-light);
+    border-bottom: 2px solid var(--amber);
+    padding: 14px 20px;
+  }
+  .teacher-bar-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .teacher-bar-label {
+    font-size: 13px;
+    color: #7A4500;
+    font-weight: 500;
+  }
+  .teacher-bar-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .teacher-bar select {
+    border: 1.5px solid var(--amber);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #7A4500;
+    background: white;
+    cursor: pointer;
+    outline: none;
+  }
+  .teacher-bar button {
+    border: 1.5px solid var(--amber);
+    border-radius: var(--radius-sm);
+    padding: 8px 14px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+    background: var(--amber);
+    cursor: pointer;
+  }
+  .teacher-bar-note {
+    max-width: 860px;
+    margin: 8px auto 0;
+    font-size: 11.5px;
+    color: #7A4500;
+    opacity: 0.85;
+    line-height: 1.5;
+  }
+
+  /* ── FOCUS BANNER (for students) ── */
+  .focus-banner {
+    background: var(--brand-light);
+    color: var(--brand);
+    border-radius: var(--radius-md);
+    padding: 12px 18px;
+    margin-bottom: 20px;
+    font-weight: 700;
+    font-size: 13.5px;
+    text-align: center;
+  }
+
   @media print {
     body { background: white; }
     .cover { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .submit-btn { display: none; }
+    .teacher-bar { display: none; }
   }
 
   @media (max-width: 600px) {
@@ -546,6 +632,23 @@
 </style>
 </head>
 <body>
+
+<!-- PANEL GURU -->
+<div class="teacher-bar" id="teacherBar">
+  <div class="teacher-bar-inner">
+    <div class="teacher-bar-label">🔧 <strong>Pengaturan Guru</strong> — pilih kategori materi fokus untuk kelas/sesi ini:</div>
+    <div class="teacher-bar-controls">
+      <select id="kategoriSelect" onchange="setKategori(this.value)">
+        <option value="dkv">🎨 A. Desain Komunikasi Visual (DKV)</option>
+        <option value="grafika">🖨️ B. Grafika</option>
+        <option value="industri4">🤖 C. Industri 4.0</option>
+        <option value="society5">🌍 D. Society 5.0</option>
+      </select>
+      <button type="button" id="copyLinkBtn" onclick="copyShareLink()">🔗 Salin Tautan untuk Siswa</button>
+    </div>
+  </div>
+  <div class="teacher-bar-note">Pilih kategori, lalu klik "Salin Tautan" dan bagikan tautan tersebut ke siswa — mereka hanya akan melihat kategori yang dipilih. Panel ini otomatis tersembunyi saat dicetak.</div>
+</div>
 
 <!-- COVER -->
 <div class="cover">
@@ -573,6 +676,9 @@
 </div>
 
 <div class="content">
+
+  <!-- FOKUS KATEGORI -->
+  <div class="focus-banner" id="focusBanner">🎯 Fokus materi kelompok kalian: DKV</div>
 
   <!-- PROGRESS -->
   <div class="progress-wrap">
@@ -614,29 +720,29 @@
     <div class="group-grid" style="margin-bottom:16px;">
       <div class="id-field">
         <label>Nama Kelompok</label>
-        <input type="text" placeholder="Contoh: Kelompok Kreatif A" oninput="updateProgress()">
+        <input type="text" data-field="kelompok_nama" placeholder="Contoh: Kelompok Kreatif A" oninput="updateProgress()">
       </div>
       <div class="id-field">
         <label>Kelas</label>
-        <input type="text" placeholder="Contoh: X DKV 1" oninput="updateProgress()">
+        <input type="text" data-field="kelompok_kelas" placeholder="Contoh: X DKV 1" oninput="updateProgress()">
       </div>
     </div>
     <div class="group-grid" style="margin-bottom:0;">
       <div class="id-field">
         <label>Anggota 1</label>
-        <input type="text" placeholder="Nama lengkap" oninput="updateProgress()">
+        <input type="text" data-field="anggota1" placeholder="Nama lengkap" oninput="updateProgress()">
       </div>
       <div class="id-field">
         <label>Anggota 2</label>
-        <input type="text" placeholder="Nama lengkap" oninput="updateProgress()">
+        <input type="text" data-field="anggota2" placeholder="Nama lengkap" oninput="updateProgress()">
       </div>
       <div class="id-field">
         <label>Anggota 3</label>
-        <input type="text" placeholder="Nama lengkap" oninput="updateProgress()">
+        <input type="text" data-field="anggota3" placeholder="Nama lengkap" oninput="updateProgress()">
       </div>
       <div class="id-field">
         <label>Anggota 4 (opsional)</label>
-        <input type="text" placeholder="Nama lengkap" oninput="updateProgress()">
+        <input type="text" data-field="anggota4" placeholder="Nama lengkap" oninput="updateProgress()">
       </div>
     </div>
   </div>
@@ -647,19 +753,19 @@
     <div class="id-grid">
       <div class="id-field">
         <label>Nama Produk</label>
-        <input type="text" placeholder="Contoh: Chitato Sapi Panggang" oninput="updateProgress()">
+        <input type="text" data-field="produk_nama" placeholder="Contoh: Chitato Sapi Panggang" oninput="updateProgress()">
       </div>
       <div class="id-field">
         <label>Merek / Brand</label>
-        <input type="text" placeholder="Contoh: Chitato" oninput="updateProgress()">
+        <input type="text" data-field="produk_merek" placeholder="Contoh: Chitato" oninput="updateProgress()">
       </div>
       <div class="id-field">
         <label>Jenis Produk</label>
-        <input type="text" placeholder="Contoh: Keripik kentang" oninput="updateProgress()">
+        <input type="text" data-field="produk_jenis" placeholder="Contoh: Keripik kentang" oninput="updateProgress()">
       </div>
       <div class="id-field">
         <label>Nama Supermarket</label>
-        <input type="text" placeholder="Contoh: Indomaret, Alfamart, dsb." oninput="updateProgress()">
+        <input type="text" data-field="produk_supermarket" placeholder="Contoh: Indomaret, Alfamart, dsb." oninput="updateProgress()">
       </div>
       <div class="photo-box" onclick="this.querySelector('input').click()">
         <div class="icon">📷</div>
@@ -677,12 +783,12 @@
   <!-- ════════════ TUGAS 1 ════════════ -->
   <div class="section-divider">
     <div class="line"></div>
-    <div class="pill">🔍 Tugas 1 — Analisis Kemasan</div>
+    <div class="pill" id="tugas1-pill">🔍 Tugas 1 — Analisis Kemasan</div>
     <div class="line"></div>
   </div>
 
   <!-- A: DKV -->
-  <div class="task-card">
+  <div class="task-card" id="cat-dkv">
     <div class="task-header">
       <div class="task-icon purple">🎨</div>
       <div>
@@ -704,7 +810,7 @@
             <div class="q-hint">Contoh: "Warna dominan merah dan kuning yang mencolok, menggunakan font sans-serif tebal untuk nama produk..."</div>
           </div>
         </div>
-        <textarea class="answer-area" placeholder="Tuliskan analisismu di sini..." oninput="updateProgress()"></textarea>
+        <textarea class="answer-area" data-field="dkv_q1" placeholder="Tuliskan analisismu di sini..." oninput="updateProgress()"></textarea>
       </div>
 
       <div class="question">
@@ -714,7 +820,7 @@
             <div class="q-text">Menurut kelompokmu, apakah unsur-unsur visual tersebut mampu menarik perhatian konsumen? Jelaskan alasannya dengan argumen yang kuat!</div>
           </div>
         </div>
-        <textarea class="answer-area" placeholder="Ya / Tidak, karena..." oninput="updateProgress()"></textarea>
+        <textarea class="answer-area" data-field="dkv_q2" placeholder="Ya / Tidak, karena..." oninput="updateProgress()"></textarea>
       </div>
 
       <div class="question">
@@ -724,13 +830,13 @@
             <div class="q-text">Bagaimana desain kemasan tersebut membantu menyampaikan informasi kepada konsumen? (Misalnya: info nutrisi, varian rasa, tanggal kadaluarsa, dll.)</div>
           </div>
         </div>
-        <textarea class="answer-area" placeholder="Tuliskan analisismu di sini..." oninput="updateProgress()"></textarea>
+        <textarea class="answer-area" data-field="dkv_q3" placeholder="Tuliskan analisismu di sini..." oninput="updateProgress()"></textarea>
       </div>
     </div>
   </div>
 
   <!-- B: Grafika -->
-  <div class="task-card">
+  <div class="task-card" id="cat-grafika">
     <div class="task-header">
       <div class="task-icon teal">🖨️</div>
       <div>
@@ -752,7 +858,7 @@
             <div class="q-hint">Perhatikan kualitas warna, tekstur permukaan, dan bahan kemasannya.</div>
           </div>
         </div>
-        <textarea class="answer-area" placeholder="Kemungkinan menggunakan... karena..." oninput="updateProgress()"></textarea>
+        <textarea class="answer-area" data-field="grafika_q1" placeholder="Kemungkinan menggunakan... karena..." oninput="updateProgress()"></textarea>
       </div>
 
       <div class="question">
@@ -762,13 +868,13 @@
             <div class="q-text">Mengapa kualitas hasil cetak kemasan sangat penting terhadap daya tarik suatu produk? Kaitkan jawabanmu dengan persaingan di supermarket!</div>
           </div>
         </div>
-        <textarea class="answer-area" placeholder="Kualitas cetak penting karena..." oninput="updateProgress()"></textarea>
+        <textarea class="answer-area" data-field="grafika_q2" placeholder="Kualitas cetak penting karena..." oninput="updateProgress()"></textarea>
       </div>
     </div>
   </div>
 
   <!-- C: Industri 4.0 -->
-  <div class="task-card">
+  <div class="task-card" id="cat-industri4">
     <div class="task-header">
       <div class="task-icon amber">🤖</div>
       <div>
@@ -798,7 +904,7 @@
             <div class="q-text">Identifikasikan minimal <strong>2 teknologi Industri 4.0</strong> yang kemungkinan dimanfaatkan dalam proses desain ATAU produksi kemasan tersebut. Jelaskan bagaimana teknologi itu bekerja!</div>
           </div>
         </div>
-        <textarea class="answer-area" style="min-height:110px;" placeholder="Teknologi 1: ... digunakan untuk...&#10;Teknologi 2: ... digunakan untuk..." oninput="updateProgress()"></textarea>
+        <textarea class="answer-area" data-field="industri4_q1" style="min-height:110px;" placeholder="Teknologi 1: ... digunakan untuk...&#10;Teknologi 2: ... digunakan untuk..." oninput="updateProgress()"></textarea>
       </div>
 
       <div class="question">
@@ -808,13 +914,13 @@
             <div class="q-text">Jelaskan manfaat penggunaan teknologi-teknologi tersebut bagi perusahaan yang memproduksi kemasan ini!</div>
           </div>
         </div>
-        <textarea class="answer-area" placeholder="Manfaat bagi perusahaan antara lain..." oninput="updateProgress()"></textarea>
+        <textarea class="answer-area" data-field="industri4_q2" placeholder="Manfaat bagi perusahaan antara lain..." oninput="updateProgress()"></textarea>
       </div>
     </div>
   </div>
 
   <!-- D: Society 5.0 -->
-  <div class="task-card">
+  <div class="task-card" id="cat-society5">
     <div class="task-header">
       <div class="task-icon coral">🌍</div>
       <div>
@@ -841,23 +947,23 @@
         <tbody>
           <tr>
             <td>👁️ Mudah dibaca semua kalangan (inklusif)</td>
-            <td><select class="yn-select" onchange="updateProgress()"><option value="">–</option><option>Ya</option><option>Tidak</option></select></td>
-            <td><input type="text" class="id-field" style="border:1.5px solid var(--gray-300); border-radius:6px; padding:8px 10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; width:100%; background:var(--gray-50); outline:none;" placeholder="Alasan..." oninput="updateProgress()"></td>
+            <td><select class="yn-select" data-field="society5_status1" onchange="updateProgress()"><option value="">–</option><option>Ya</option><option>Tidak</option></select></td>
+            <td><input type="text" class="alasan-input" data-field="society5_alasan1" placeholder="Alasan..." oninput="updateProgress()"></td>
           </tr>
           <tr>
             <td>📝 Informasi produk jelas dan lengkap</td>
-            <td><select class="yn-select" onchange="updateProgress()"><option value="">–</option><option>Ya</option><option>Tidak</option></select></td>
-            <td><input type="text" style="border:1.5px solid var(--gray-300); border-radius:6px; padding:8px 10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; width:100%; background:var(--gray-50); outline:none;" placeholder="Alasan..." oninput="updateProgress()"></td>
+            <td><select class="yn-select" data-field="society5_status2" onchange="updateProgress()"><option value="">–</option><option>Ya</option><option>Tidak</option></select></td>
+            <td><input type="text" class="alasan-input" data-field="society5_alasan2" placeholder="Alasan..." oninput="updateProgress()"></td>
           </tr>
           <tr>
             <td>♻️ Ramah lingkungan (material / desain)</td>
-            <td><select class="yn-select" onchange="updateProgress()"><option value="">–</option><option>Ya</option><option>Tidak</option></select></td>
-            <td><input type="text" style="border:1.5px solid var(--gray-300); border-radius:6px; padding:8px 10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; width:100%; background:var(--gray-50); outline:none;" placeholder="Alasan..." oninput="updateProgress()"></td>
+            <td><select class="yn-select" data-field="society5_status3" onchange="updateProgress()"><option value="">–</option><option>Ya</option><option>Tidak</option></select></td>
+            <td><input type="text" class="alasan-input" data-field="society5_alasan3" placeholder="Alasan..." oninput="updateProgress()"></td>
           </tr>
           <tr>
             <td>❤️ Desain memperhatikan kebutuhan konsumen</td>
-            <td><select class="yn-select" onchange="updateProgress()"><option value="">–</option><option>Ya</option><option>Tidak</option></select></td>
-            <td><input type="text" style="border:1.5px solid var(--gray-300); border-radius:6px; padding:8px 10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; width:100%; background:var(--gray-50); outline:none;" placeholder="Alasan..." oninput="updateProgress()"></td>
+            <td><select class="yn-select" data-field="society5_status4" onchange="updateProgress()"><option value="">–</option><option>Ya</option><option>Tidak</option></select></td>
+            <td><input type="text" class="alasan-input" data-field="society5_alasan4" placeholder="Alasan..." oninput="updateProgress()"></td>
           </tr>
         </tbody>
       </table>
@@ -869,7 +975,7 @@
             <div class="q-text">Jika kemasan belum memenuhi prinsip Society 5.0, bagian apa yang perlu diperbaiki? Berikan penjelasan yang konkret!</div>
           </div>
         </div>
-        <textarea class="answer-area" placeholder="Bagian yang perlu diperbaiki adalah... karena..." oninput="updateProgress()"></textarea>
+        <textarea class="answer-area" data-field="society5_q5" placeholder="Bagian yang perlu diperbaiki adalah... karena..." oninput="updateProgress()"></textarea>
       </div>
     </div>
   </div>
@@ -884,7 +990,7 @@
           <div class="q-text">Berdasarkan seluruh analisismu, jelaskan <strong style="color:#F9D770;">hubungan antara DKV, Grafika, Industri 4.0, dan Society 5.0</strong> pada kemasan yang kamu amati. Gunakan contoh konkret dari produkmu!</div>
         </div>
       </div>
-      <textarea class="answer-area" style="min-height:120px; background:rgba(255,255,255,0.12); border-color:rgba(255,255,255,0.3); color:white;" placeholder="DKV, Grafika, Industri 4.0, dan Society 5.0 saling terhubung karena..." oninput="updateProgress()"></textarea>
+      <textarea class="answer-area" data-field="kesimpulan" style="min-height:120px; background:rgba(255,255,255,0.12); border-color:rgba(255,255,255,0.3); color:white;" placeholder="DKV, Grafika, Industri 4.0, dan Society 5.0 saling terhubung karena..." oninput="updateProgress()"></textarea>
     </div>
   </div>
 
@@ -914,7 +1020,7 @@
           <div class="q-num">1</div>
           <div><div class="q-text">Apa <strong>kelebihan</strong> kemasan produk tersebut? (Minimal 2 poin)</div></div>
         </div>
-        <textarea class="answer-area" placeholder="Kelebihan kemasan ini:&#10;1. ...&#10;2. ..." oninput="updateProgress()"></textarea>
+        <textarea class="answer-area" data-field="tugas2_kelebihan" placeholder="Kelebihan kemasan ini:&#10;1. ...&#10;2. ..." oninput="updateProgress()"></textarea>
       </div>
 
       <div class="question">
@@ -922,7 +1028,7 @@
           <div class="q-num">2</div>
           <div><div class="q-text">Apa <strong>kekurangan</strong> kemasan produk tersebut? (Minimal 2 poin)</div></div>
         </div>
-        <textarea class="answer-area" placeholder="Kekurangan kemasan ini:&#10;1. ...&#10;2. ..." oninput="updateProgress()"></textarea>
+        <textarea class="answer-area" data-field="tugas2_kekurangan" placeholder="Kekurangan kemasan ini:&#10;1. ...&#10;2. ..." oninput="updateProgress()"></textarea>
       </div>
 
       <div class="question">
@@ -935,15 +1041,15 @@
         </div>
         <div class="improvement-row">
           <div class="imp-num">1</div>
-          <textarea class="answer-area" style="min-height:70px;" placeholder="Perbaikan pertama: ..." oninput="updateProgress()"></textarea>
+          <textarea class="answer-area" data-field="tugas2_perbaikan1" style="min-height:70px;" placeholder="Perbaikan pertama: ..." oninput="updateProgress()"></textarea>
         </div>
         <div class="improvement-row">
           <div class="imp-num">2</div>
-          <textarea class="answer-area" style="min-height:70px;" placeholder="Perbaikan kedua: ..." oninput="updateProgress()"></textarea>
+          <textarea class="answer-area" data-field="tugas2_perbaikan2" style="min-height:70px;" placeholder="Perbaikan kedua: ..." oninput="updateProgress()"></textarea>
         </div>
         <div class="improvement-row">
           <div class="imp-num">3</div>
-          <textarea class="answer-area" style="min-height:70px;" placeholder="Perbaikan ketiga: ..." oninput="updateProgress()"></textarea>
+          <textarea class="answer-area" data-field="tugas2_perbaikan3" style="min-height:70px;" placeholder="Perbaikan ketiga: ..." oninput="updateProgress()"></textarea>
         </div>
       </div>
 
@@ -952,7 +1058,7 @@
           <div class="q-num">4</div>
           <div><div class="q-text">Bagaimana <strong>teknologi grafika atau Industri 4.0</strong> dapat membantu mewujudkan perbaikan yang kamu usulkan?</div></div>
         </div>
-        <textarea class="answer-area" placeholder="Teknologi yang dapat membantu yaitu... karena..." oninput="updateProgress()"></textarea>
+        <textarea class="answer-area" data-field="tugas2_teknologi" placeholder="Teknologi yang dapat membantu yaitu... karena..." oninput="updateProgress()"></textarea>
       </div>
 
       <div class="question" style="margin-bottom:0;">
@@ -960,7 +1066,7 @@
           <div class="q-num">5</div>
           <div><div class="q-text">Jelaskan bagaimana usulanmu membuat kemasan lebih sesuai dengan prinsip <strong>Society 5.0</strong> (inklusif, etis, dan ramah lingkungan)!</div></div>
         </div>
-        <textarea class="answer-area" placeholder="Usulan saya membuat kemasan lebih Society 5.0 karena..." oninput="updateProgress()"></textarea>
+        <textarea class="answer-area" data-field="tugas2_society5" placeholder="Usulan saya membuat kemasan lebih Society 5.0 karena..." oninput="updateProgress()"></textarea>
       </div>
     </div>
   </div>
@@ -1005,8 +1111,10 @@
   </div>
 
   <div class="submit-wrap">
+    <button class="submit-btn" id="sendBtn" onclick="sendToTeacher()" style="background:var(--teal); box-shadow:0 4px 20px rgba(15,143,109,0.35);">📤 &nbsp; Kirim ke Guru</button>
     <button class="submit-btn" onclick="printLKPD()">🖨️ &nbsp; Cetak / Simpan LKPD</button>
   </div>
+  <p id="sendStatus" style="display:none; max-width:520px; margin:14px auto 0; text-align:center; font-size:13px; color:var(--teal); font-weight:600; line-height:1.6;"></p>
 
 </div>
 
@@ -1016,6 +1124,22 @@
 </div>
 
 <script>
+/* ══════════════════════════════════════════════════════════════
+   ⚙️ PENGATURAN GURU — GANTI URL DI BAWAH INI
+   Setelah men-deploy Google Apps Script (lihat panduan
+   "Panduan_Setup_Google_Sheets.md"), tempel URL Web App kamu
+   di antara tanda kutip berikut:
+   ══════════════════════════════════════════════════════════════ */
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxwyq3E10vf_JKgwtj3VYb2um09k5FR9NlWoJPOhAZ-jQwv-ZTqTSBSAIsmZgRwHsbnpA/exec";
+
+/* ── Peta kategori fokus ── */
+const CATEGORY_MAP = {
+  dkv:       { id: 'cat-dkv',       nama: 'DKV (Desain Komunikasi Visual)', pill: '🔍 Tugas 1 — Analisis Kemasan · Fokus: DKV' },
+  grafika:   { id: 'cat-grafika',   nama: 'Grafika',                        pill: '🔍 Tugas 1 — Analisis Kemasan · Fokus: Grafika' },
+  industri4: { id: 'cat-industri4', nama: 'Industri 4.0',                   pill: '🔍 Tugas 1 — Analisis Kemasan · Fokus: Industri 4.0' },
+  society5:  { id: 'cat-society5',  nama: 'Society 5.0',                    pill: '🔍 Tugas 1 — Analisis Kemasan · Fokus: Society 5.0' }
+};
+
 function handlePhoto(input) {
   if (input.files && input.files[0]) {
     const reader = new FileReader();
@@ -1027,8 +1151,12 @@ function handlePhoto(input) {
   }
 }
 
+function isVisible(el) {
+  return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
+}
+
 function updateProgress() {
-  const inputs = document.querySelectorAll('input[type="text"], textarea, select');
+  const inputs = Array.from(document.querySelectorAll('[data-field]')).filter(isVisible);
   let filled = 0;
   inputs.forEach(el => {
     if ((el.tagName === 'SELECT' && el.value && el.value !== '') ||
@@ -1036,7 +1164,7 @@ function updateProgress() {
       filled++;
     }
   });
-  const pct = Math.round((filled / inputs.length) * 100);
+  const pct = inputs.length ? Math.round((filled / inputs.length) * 100) : 0;
   document.getElementById('progress-fill').style.width = pct + '%';
   document.getElementById('progress-pct').textContent = pct + '%';
 }
@@ -1044,6 +1172,117 @@ function updateProgress() {
 function printLKPD() {
   window.print();
 }
+
+/* ── Fokus kategori materi ── */
+function setKategori(value, updateUrl) {
+  if (typeof updateUrl === 'undefined') updateUrl = true;
+  const chosen = CATEGORY_MAP[value] ? value : 'dkv';
+  Object.values(CATEGORY_MAP).forEach(c => {
+    const el = document.getElementById(c.id);
+    if (el) el.style.display = 'none';
+  });
+  const info = CATEGORY_MAP[chosen];
+  const activeEl = document.getElementById(info.id);
+  if (activeEl) activeEl.style.display = '';
+
+  const selectEl = document.getElementById('kategoriSelect');
+  if (selectEl) selectEl.value = chosen;
+
+  const pillEl = document.getElementById('tugas1-pill');
+  if (pillEl) pillEl.textContent = info.pill;
+
+  const bannerEl = document.getElementById('focusBanner');
+  if (bannerEl) bannerEl.textContent = '🎯 Fokus materi kelompok kalian: ' + info.nama;
+
+  if (updateUrl) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('kategori', chosen);
+    window.history.replaceState({}, '', url);
+  }
+  updateProgress();
+}
+
+function copyShareLink() {
+  const selectEl = document.getElementById('kategoriSelect');
+  const url = new URL(window.location.href);
+  url.searchParams.set('kategori', selectEl.value);
+  const btn = document.getElementById('copyLinkBtn');
+  const original = btn.textContent;
+  navigator.clipboard.writeText(url.toString()).then(function () {
+    btn.textContent = '✅ Tersalin!';
+    setTimeout(function () { btn.textContent = original; }, 1800);
+  }).catch(function () {
+    window.prompt('Salin tautan berikut secara manual:', url.toString());
+  });
+}
+
+/* ── Kumpulkan seluruh jawaban siswa ── */
+function collectFormData() {
+  const kategoriSelect = document.getElementById('kategoriSelect');
+  const data = {
+    kategoriFokus: kategoriSelect ? kategoriSelect.value : '',
+    waktuKirim: new Date().toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short' })
+  };
+  document.querySelectorAll('[data-field]').forEach(function (el) {
+    data[el.dataset.field] = (el.value || '').trim();
+  });
+  return data;
+}
+
+/* ── Kirim ke Google Sheets guru via Apps Script ── */
+function sendToTeacher() {
+  const namaKelompokEl = document.querySelector('[data-field="kelompok_nama"]');
+  const namaProdukEl = document.querySelector('[data-field="produk_nama"]');
+  const namaKelompok = namaKelompokEl ? namaKelompokEl.value.trim() : '';
+  const namaProduk = namaProdukEl ? namaProdukEl.value.trim() : '';
+
+  if (!namaKelompok || !namaProduk) {
+    alert('Mohon isi minimal "Nama Kelompok" dan "Nama Produk" sebelum mengirim ke guru.');
+    return;
+  }
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.indexOf('PASTE_URL') !== -1) {
+    alert('Tautan pengiriman data belum dipasang oleh guru. Silakan cetak/simpan LKPD ini dan hubungi gurumu.');
+    return;
+  }
+
+  const btn = document.getElementById('sendBtn');
+  const statusEl = document.getElementById('sendStatus');
+  const originalText = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '⏳ &nbsp; Mengirim...';
+
+  const payload = collectFormData();
+
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload)
+  }).then(function () {
+    btn.innerHTML = '✅ &nbsp; Terkirim ke Guru!';
+    if (statusEl) {
+      statusEl.style.display = 'block';
+      statusEl.textContent = 'Data berhasil dikirim pukul ' + new Date().toLocaleTimeString('id-ID') + '. Kalian masih bisa melanjutkan mengisi dan kirim ulang bila ada perubahan.';
+    }
+  }).catch(function () {
+    btn.innerHTML = originalText;
+    alert('Gagal mengirim data. Periksa koneksi internet kalian, lalu coba lagi.');
+  }).finally(function () {
+    setTimeout(function () {
+      btn.disabled = false;
+      if (btn.innerHTML.indexOf('Terkirim') !== -1) {
+        btn.innerHTML = '📤 &nbsp; Kirim Ulang ke Guru';
+      }
+    }, 2000);
+  });
+}
+
+/* ── Inisialisasi saat halaman dibuka ── */
+(function initKategori() {
+  const params = new URLSearchParams(window.location.search);
+  const k = params.get('kategori');
+  setKategori(k && CATEGORY_MAP[k] ? k : 'dkv', false);
+})();
 
 updateProgress();
 </script>
